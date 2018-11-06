@@ -1,6 +1,6 @@
-# Project Title
+# SuCOS
 
-SuCOS: a RDKit-based shape overlap metric. 
+SuCOS: a RDKit-based shape overlap metric. Combines volume overlap and featuremap scores to give a combined overlap score similar to OpenEye's Tanicombo.
 
 ## Getting Started
 
