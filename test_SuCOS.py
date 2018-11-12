@@ -115,6 +115,25 @@ class TestCase(unittest.TestCase):
         SuCOS_score2 = float(ms[0].GetProp("SuCOS_score"))
         assert SuCOS_score2 < 1
         assert SuCOS_score2 < SuCOS_score 
+    
+    def test8_SuCOS(self):
+        """Another test to check Hydrogens don't affect score"""
+        ref_sdf = "test_data/3adu_lig.sdf"
+        prb_sdf = "test_data/3ads_lig.sdf"
+        refH_sdf = "test_data/3adu_ligH.sdf"
+        prbH_sdf = "test_data/3ads_ligH.sdf"
+
+
+        SuCOS_score1 = calc_SuCOS.main(ref_sdf, prb_sdf)
+        SuCOS_score2 = calc_SuCOS.main(refH_sdf, prbH_sdf)
+        SuCOS_score3 = calc_SuCOS.main(refH_sdf, prb_sdf)
+        SuCOS_score4 = calc_SuCOS.main(ref_sdf, prbH_sdf)
+
+        assert SuCOS_score1 == SuCOS_score2
+        assert SuCOS_score1 == SuCOS_score3
+        assert SuCOS_score1 == SuCOS_score4
+
+
 
 if __name__ == '__main__':
     print("Testing SuCOS")
