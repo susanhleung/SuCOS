@@ -1,20 +1,24 @@
 import argparse, os
 from rdkit import Chem
 from rdkit.Chem import AllChem, rdShapeHelpers
+from rdkit.Chem.FeatMaps import FeatMaps
+from rdkit import RDConfig
+
+#################################################
+#### Setting up the features to use in FeatureMap
+fdef = AllChem.BuildFeatureFactory(os.path.join(RDConfig.RDDataDir, 'BaseFeatures.fdef'))
+#    keep = ('Donor','Acceptor','NegIonizable','PosIonizable','Aromatic')
+
+fmParams = {}
+for k in fdef.GetFeatureFamilies():
+    fparams = FeatMaps.FeatMapParams()
+    fmParams[k] = fparams
+
+keep = ('Donor', 'Acceptor', 'NegIonizable', 'PosIonizable', 'ZnBinder',
+        'Aromatic', 'Hydrophobe', 'LumpedHydrophobe')
+#################################################
 
 def get_FeatureMapScore(small_m, large_m):
-    from rdkit.Chem.FeatMaps import FeatMaps
-    from rdkit import RDConfig
-    fdef = AllChem.BuildFeatureFactory(os.path.join(RDConfig.RDDataDir, 'BaseFeatures.fdef'))
-    #    keep = ('Donor','Acceptor','NegIonizable','PosIonizable','Aromatic')
-
-    fmParams = {}
-    for k in fdef.GetFeatureFamilies():
-        fparams = FeatMaps.FeatMapParams()
-        fmParams[k] = fparams
-
-    keep = ('Donor', 'Acceptor', 'NegIonizable', 'PosIonizable', 'ZnBinder',
-            'Aromatic', 'Hydrophobe', 'LumpedHydrophobe')
     featLists = []
     for m in [small_m, large_m]:
         rawFeats = fdef.GetFeaturesForMol(m)
@@ -61,6 +65,7 @@ def main(ref_file, prb_file):
         print "********************************"
         prb_mol.SetProp("SuCOS_score", str(SuCOS_score))
         w.write(prb_mol)
+    return SuCOS_score
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
