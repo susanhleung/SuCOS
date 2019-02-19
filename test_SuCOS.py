@@ -133,9 +133,27 @@ class TestCase(unittest.TestCase):
         assert SuCOS_score1 == SuCOS_score3
         assert SuCOS_score1 == SuCOS_score4
 
+    def test9_SuCOS(self):
+        """Testing to make sure SuCOS score is not > 1 with a
+        molecule and itself"""
+        ref_sdf = "test_data/3ivc_ligand.sdf"
+        SuCOS_score = calc_SuCOS.main(ref_sdf, ref_sdf)
+        assert SuCOS_score <= 1
+
+    def test10_SuCOS(self):
+        """Testing to make sure SuCOS score is not > 1 with a
+        molecule and itself"""
+        from rdkit.Chem import rdMolAlign
+        ref_sdf = "test_data/3ivc_ligand.sdf"
+        ref_ms = Chem.SDMolSupplier(ref_sdf)
+        gen_mol = Chem.Mol(ref_ms[0])
+        ref_mol = Chem.Mol(ref_ms[0])
+        pyO3A = rdMolAlign.GetO3A(gen_mol, ref_mol).Align()
+        SuCOS_score = calc_SuCOS.main(gen_mol, ref_mol, write=False)
+        assert SuCOS_score <= 1
 
 
 if __name__ == '__main__':
     print("Testing SuCOS")
-    unittest.main()
+    print unittest.main()
 
