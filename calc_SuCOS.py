@@ -78,9 +78,9 @@ def main(ref_file, prb_file, write=True, return_all=False,
         protrude_dist = np.clip(protrude_dist, 0, 1)
         SuCOS_score = 0.5*fm_score + 0.5*(1 - protrude_dist)
 
-        print "********************************"
-        print "SuCOS score:\t%f" % SuCOS_score
-        print "********************************"
+        print ("********************************")
+        print ("SuCOS score:\t%f" % SuCOS_score)
+        print ("********************************")
         prb_mol.SetProp("SuCOS_score", str(SuCOS_score))
         prb_mol.SetProp("Volume_score", str(1 - protrude_dist))
         prb_mol.SetProp("Feature_score", str(fm_score))
@@ -113,18 +113,18 @@ if __name__ == "__main__":
 
     if args.score_mode:
         if args.score_mode == 'all':
-            print "Feature maps scoring by all"
+            print ("Feature maps scoring by all")
             score_mode = FeatMaps.FeatMapScoreMode.All
         elif args.score_mode == 'closest':
-            print "Feature maps scoring by closest"
+            print ("Feature maps scoring by closest")
             score_mode = FeatMaps.FeatMapScoreMode.Closest
         elif args.score_mode == 'best':
-            print "Feature maps scoring by best"
+            print ("Feature maps scoring by best")
             score_mode = FeatMaps.FeatMapScoreMode.Best
         else:
-            print "This is not an option"
+            print ("This is not an option")
     else:
-        print "Feature maps scoring by all"
+        print ("Feature maps scoring by all")
         score_mode = FeatMaps.FeatMapScoreMode.All
 
     main(ref_file, prb_file, args.write, args.return_all, score_mode)

@@ -155,5 +155,5 @@ class TestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     print("Testing SuCOS")
-    print unittest.main()
+    print(unittest.main())
 
