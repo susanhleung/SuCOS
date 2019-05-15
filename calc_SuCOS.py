@@ -20,17 +20,19 @@ keep = ('Donor', 'Acceptor', 'NegIonizable', 'PosIonizable', 'ZnBinder',
         'Aromatic', 'Hydrophobe', 'LumpedHydrophobe')
 #################################################
 
-def get_FeatureMapScore(small_m, large_m):
+def get_FeatureMapScore(small_m, large_m, score_mode=FeatMaps.FeatMapScoreMode.All):
     featLists = []
     for m in [small_m, large_m]:
         rawFeats = fdef.GetFeaturesForMol(m)
         # filter that list down to only include the ones we're intereted in
         featLists.append([f for f in rawFeats if f.GetFamily() in keep])
     fms = [FeatMaps.FeatMap(feats=x, weights=[1] * len(x), params=fmParams) for x in featLists]
+    fms[0].scoreMode = score_mode
     fm_score = fms[0].ScoreFeats(featLists[1]) / min(fms[0].GetNumFeatures(), len(featLists[1]))
     return fm_score
 
-def main(ref_file, prb_file, write=True, return_all=False):
+def main(ref_file, prb_file, write=True, return_all=False,
+         score_mode=FeatMaps.FeatMapScoreMode.All):
     if type(ref_file) == str:
         if os.path.splitext(ref_file)[-1] == '.sdf':
             reflig = Chem.MolFromMolFile(ref_file, sanitize=True)
@@ -38,8 +40,6 @@ def main(ref_file, prb_file, write=True, return_all=False):
             reflig = Chem.MolFromMol2File(ref_file, sanitize=True)
     elif type(ref_file) == rdkit.Chem.rdchem.Mol:
         reflig = ref_file
-
-
 
     if type(prb_file) == str:
         if os.path.splitext(prb_file)[-1] == '.sdf':
@@ -66,7 +66,7 @@ def main(ref_file, prb_file, write=True, return_all=False):
         ##############################################
         ####### Feature map
         ##############################################
-        fm_score = get_FeatureMapScore(reflig, prb_mol)
+        fm_score = get_FeatureMapScore(reflig, prb_mol, score_mode)
         fm_score = np.clip(fm_score, 0, 1)
         ##############################################
 
@@ -94,12 +94,37 @@ def main(ref_file, prb_file, write=True, return_all=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="run SuCOS")
-    parser.add_argument('--lig1', help='first ligand')
-    parser.add_argument('--lig2', help='second ligand')
+    parser.add_argument('--lig1', help='first ligand, in sdf or mol2 file\
+                        format.')
+    parser.add_argument('--lig2', help='second ligand(s), in sdf or .sdf.gz\
+                        file format.')
+    parser.add_argument('--write', action='store_true', default=False,
+                        help='writes the SuCOS score into a sdf file with\
+                        suffix _SuCOS_score.sdf')
+    parser.add_argument('--return_all', action='store_true', default=False)
+    parser.add_argument('--score_mode', choices=['all', 'closest', 'best'],
+                        help='choose the scoring mode for the feature map,\
+                        default is all.')
 
     args = parser.parse_args()
 
     ref_file = args.lig1
     prb_file = args.lig2
 
-    main(ref_file, prb_file)
+    if args.score_mode:
+        if args.score_mode == 'all':
+            print "Feature maps scoring by all"
+            score_mode = FeatMaps.FeatMapScoreMode.All
+        elif args.score_mode == 'closest':
+            print "Feature maps scoring by closest"
+            score_mode = FeatMaps.FeatMapScoreMode.Closest
+        elif args.score_mode == 'best':
+            print "Feature maps scoring by best"
+            score_mode = FeatMaps.FeatMapScoreMode.Best
+        else:
+            print "This is not an option"
+    else:
+        print "Feature maps scoring by all"
+        score_mode = FeatMaps.FeatMapScoreMode.All
+
+    main(ref_file, prb_file, args.write, args.return_all, score_mode)
