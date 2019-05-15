@@ -1,4 +1,4 @@
-# (c) 2019 Susan H. Leung
+# Copyright <2019> <University of Oxford>
 # This code is licensed under MIT license (see LICENSE.txt for details)
 
 import argparse, os, gzip
