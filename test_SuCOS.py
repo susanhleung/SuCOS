@@ -1,3 +1,6 @@
+# (c) 2019 Susan H. Leung
+# This code is licensed under MIT license (see LICENSE.txt for details)
+
 """Tests for calc_SuCOS.py"""
 import unittest
 import os

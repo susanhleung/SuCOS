@@ -1,3 +1,6 @@
+# (c) 2019 Susan H. Leung
+# This code is licensed under MIT license (see LICENSE.txt for details)
+
 import argparse, os, gzip
 import numpy as np
 import rdkit
@@ -94,9 +97,9 @@ def main(ref_file, prb_file, write=True, return_all=False,
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="run SuCOS")
-    parser.add_argument('--lig1', help='first ligand, in sdf or mol2 file\
+    parser.add_argument('--lig1', help='the smaller/reference ligand, in sdf or mol2 file\
                         format.')
-    parser.add_argument('--lig2', help='second ligand(s), in sdf or .sdf.gz\
+    parser.add_argument('--lig2', help='the larger/query ligand(s), in sdf or .sdf.gz\
                         file format.')
     parser.add_argument('--write', action='store_true', default=False,
                         help='writes the SuCOS score into a sdf file with\
